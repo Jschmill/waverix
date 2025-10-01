@@ -18,17 +18,18 @@ export const contactFormSchema = z.object({
   companySize: z.string()
     .min(1, 'Please select your company size'),
   currentChallenges: z.string()
-    .min(10, 'Please describe your current challenges (at least 10 characters)')
-    .max(1000, 'Description must be less than 1000 characters'),
+    .transform(val => val || '')
+    .refine(val => val.length > 0, 'Please describe your current challenges'),
   interestedServices: z.string()
-    .min(1, 'Please select the services you\'re interested in'),
-  projectTimeline: z.string()
-    .min(1, 'Please select your project timeline'),
+    .transform(val => val || '')
+    .refine(val => val.length > 0, 'Please select the services you\'re interested in'),
   budget: z.string()
-    .min(1, 'Please select your budget range'),
+    .transform(val => val || '')
+    .refine(val => val.length > 0, 'Please select your budget range'),
   additionalInfo: z.string()
     .max(1000, 'Additional info must be less than 1000 characters')
     .optional()
+    .default('')
 })
 
 export const subscribeFormSchema = z.object({
@@ -68,15 +69,6 @@ export const interestedServicesOptions = [
   { value: 'strategy-consulting', label: 'Strategy & Consulting' },
   { value: 'full-service-package', label: 'Full-Service Package' },
   { value: 'not-sure', label: 'Not Sure Yet' }
-]
-
-export const projectTimelineOptions = [
-  { value: 'asap', label: 'As soon as possible' },
-  { value: '1-month', label: 'Within 1 month' },
-  { value: '2-3-months', label: '2-3 months' },
-  { value: '3-6-months', label: '3-6 months' },
-  { value: '6-months-plus', label: '6+ months' },
-  { value: 'flexible', label: 'Flexible timeline' }
 ]
 
 export const budgetOptions = [

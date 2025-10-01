@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { Send, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/Input'
-import { contactFormSchema, type ContactFormData, industryOptions, companySizeOptions, interestedServicesOptions, projectTimelineOptions, budgetOptions } from '@/lib/validations'
+import { contactFormSchema, type ContactFormData, industryOptions, companySizeOptions, interestedServicesOptions, budgetOptions } from '@/lib/validations'
 
 export const ContactForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -20,7 +20,20 @@ export const ContactForm: React.FC = () => {
     reset
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    mode: 'onChange'
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      businessEmail: '',
+      companyName: '',
+      industry: '',
+      companySize: '',
+      currentChallenges: '',
+      interestedServices: '',
+      budget: '',
+      additionalInfo: ''
+    }
   })
 
   const onSubmit = async (data: ContactFormData) => {
@@ -140,22 +153,13 @@ export const ContactForm: React.FC = () => {
         </div>
 
         {/* Project Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Select
-            label="Interested Services"
-            placeholder="Select services you're interested in"
-            options={interestedServicesOptions}
-            error={errors.interestedServices?.message}
-            {...register('interestedServices')}
-          />
-          <Select
-            label="Project Timeline"
-            placeholder="Select your timeline"
-            options={projectTimelineOptions}
-            error={errors.projectTimeline?.message}
-            {...register('projectTimeline')}
-          />
-        </div>
+        <Select
+          label="Interested Services"
+          placeholder="Select services you're interested in"
+          options={interestedServicesOptions}
+          error={errors.interestedServices?.message}
+          {...register('interestedServices')}
+        />
 
         {/* Budget */}
         <Select

@@ -9,7 +9,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select, Textarea } from '@/components/ui/Input'
-import { contactFormSchema, type ContactFormData, industryOptions, companySizeOptions, interestedServicesOptions, projectTimelineOptions, budgetOptions } from '@/lib/validations'
+import { contactFormSchema, type ContactFormData, industryOptions, companySizeOptions, interestedServicesOptions, budgetOptions } from '@/lib/validations'
 
 interface GetStartedModalProps {
   isOpen: boolean
@@ -37,7 +37,20 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
     reset
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    mode: 'onChange'
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      businessEmail: '',
+      companyName: '',
+      industry: '',
+      companySize: '',
+      currentChallenges: '',
+      interestedServices: '',
+      budget: '',
+      additionalInfo: ''
+    }
   })
 
 
@@ -65,7 +78,7 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
         fieldsToValidate = ['businessEmail', 'companyName', 'industry', 'companySize']
         break
       case 3:
-        fieldsToValidate = ['interestedServices', 'projectTimeline']
+        fieldsToValidate = ['interestedServices']
         break
       case 4:
         fieldsToValidate = ['budget', 'currentChallenges']
@@ -254,13 +267,6 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
                   options={interestedServicesOptions}
                   error={errors.interestedServices?.message}
                   {...register('interestedServices')}
-                />
-                <Select
-                  label="Project Timeline"
-                  placeholder="When would you like to start?"
-                  options={projectTimelineOptions}
-                  error={errors.projectTimeline?.message}
-                  {...register('projectTimeline')}
                 />
                 <div className="bg-slate-800/30 rounded-lg p-4 border border-purple-500/20">
                   <h5 className="font-medium text-white mb-2">Our Services Include:</h5>

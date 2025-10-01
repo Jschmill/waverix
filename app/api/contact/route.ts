@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         companySize: validatedData.companySize,
         currentChallenges: validatedData.currentChallenges,
         interestedServices: validatedData.interestedServices,
-        projectTimeline: validatedData.projectTimeline,
+        projectTimeline: 'not-specified', // Default value since we removed this field
         budget: validatedData.budget,
         additionalInfo: validatedData.additionalInfo,
         source: body.source || 'contact_form',
