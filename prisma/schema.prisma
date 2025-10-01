@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id                  String   @id @default(cuid())
+  firstName           String
+  lastName            String
+  businessEmail       String
+  companyName         String
+  industry            String
+  companySize         String
+  currentChallenges   String
+  interestedServices  String
+  projectTimeline     String
+  budget              String
+  additionalInfo      String?
+  source              String   // "contact_form" or "get_started"
+  status              String   @default("new") // "new", "contacted", "qualified", "closed"
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  // Email automation fields
+  emailSent           Boolean  @default(false)
+  emailSentAt         DateTime?
+  
+  @@map("contacts")
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   // "website", "social", "referral", etc.
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Email automation fields
+  welcomeEmailSent Boolean  @default(false)
+  welcomeEmailSentAt DateTime?
+  
+  @@map("subscribers")
+}

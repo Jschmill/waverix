@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { Send, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/Input'
-import { contactFormSchema, type ContactFormData, primaryInterestOptions, monthlyBudgetOptions } from '@/lib/validations'
+import { contactFormSchema, type ContactFormData, industryOptions, companySizeOptions, interestedServicesOptions, projectTimelineOptions, budgetOptions } from '@/lib/validations'
 
 export const ContactForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -27,12 +27,24 @@ export const ContactForm: React.FC = () => {
     setIsSubmitting(true)
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          source: 'contact_form'
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Something went wrong')
+      }
       
-      // Here you would normally send data to your API endpoint
-      console.log('Form submitted:', data)
-      
+      console.log('Form submitted successfully:', result)
       setIsSubmitted(true)
       reset()
       
@@ -42,6 +54,7 @@ export const ContactForm: React.FC = () => {
       }, 5000)
     } catch (error) {
       console.error('Submission error:', error)
+      // You could add error state handling here
     } finally {
       setIsSubmitting(false)
     }
@@ -101,38 +114,72 @@ export const ContactForm: React.FC = () => {
             {...register('businessEmail')}
           />
           <Input
-            type="url"
-            label="Company Website"
-            placeholder="https://company.com"
-            error={errors.companyWebsite?.message}
-            {...register('companyWebsite')}
+            label="Company Name"
+            placeholder="Acme Corporation"
+            error={errors.companyName?.message}
+            {...register('companyName')}
+          />
+        </div>
+
+        {/* Company Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Select
+            label="Industry"
+            placeholder="Select your industry"
+            options={industryOptions}
+            error={errors.industry?.message}
+            {...register('industry')}
+          />
+          <Select
+            label="Company Size"
+            placeholder="Select company size"
+            options={companySizeOptions}
+            error={errors.companySize?.message}
+            {...register('companySize')}
           />
         </div>
 
         {/* Project Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Select
-            label="Primary Interest"
-            placeholder="Select your main interest"
-            options={primaryInterestOptions}
-            error={errors.primaryInterest?.message}
-            {...register('primaryInterest')}
+            label="Interested Services"
+            placeholder="Select services you're interested in"
+            options={interestedServicesOptions}
+            error={errors.interestedServices?.message}
+            {...register('interestedServices')}
           />
           <Select
-            label="Monthly Budget Range"
-            placeholder="Select your budget range"
-            options={monthlyBudgetOptions}
-            error={errors.monthlyBudget?.message}
-            {...register('monthlyBudget')}
+            label="Project Timeline"
+            placeholder="Select your timeline"
+            options={projectTimelineOptions}
+            error={errors.projectTimeline?.message}
+            {...register('projectTimeline')}
           />
         </div>
 
-        {/* Message */}
+        {/* Budget */}
+        <Select
+          label="Budget Range"
+          placeholder="Select your budget range"
+          options={budgetOptions}
+          error={errors.budget?.message}
+          {...register('budget')}
+        />
+
+        {/* Current Challenges */}
         <Textarea
-          label="Project Details"
-          placeholder="Tell us about your business goals, target audience, current challenges, and what you hope to achieve with social media marketing..."
-          error={errors.reason?.message}
-          {...register('reason')}
+          label="Current Challenges"
+          placeholder="Describe your current marketing challenges, goals, and what you hope to achieve..."
+          error={errors.currentChallenges?.message}
+          {...register('currentChallenges')}
+        />
+
+        {/* Additional Info */}
+        <Textarea
+          label="Additional Information (Optional)"
+          placeholder="Any additional details you'd like to share..."
+          error={errors.additionalInfo?.message}
+          {...register('additionalInfo')}
         />
 
         {/* Submit */}

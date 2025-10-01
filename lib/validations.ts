@@ -10,16 +10,25 @@ export const contactFormSchema = z.object({
   businessEmail: z.string()
     .email('Please enter a valid email address')
     .min(5, 'Email must be at least 5 characters'),
-  companyWebsite: z.string()
-    .url('Please enter a valid website URL')
-    .min(8, 'Website URL must be at least 8 characters'),
-  primaryInterest: z.string()
-    .min(1, 'Please select your primary interest'),
-  monthlyBudget: z.string()
-    .min(1, 'Please select your monthly budget range'),
-  reason: z.string()
-    .min(10, 'Please provide at least 10 characters describing your needs')
-    .max(500, 'Description must be less than 500 characters')
+  companyName: z.string()
+    .min(2, 'Company name must be at least 2 characters')
+    .max(100, 'Company name must be less than 100 characters'),
+  industry: z.string()
+    .min(1, 'Please select your industry'),
+  companySize: z.string()
+    .min(1, 'Please select your company size'),
+  currentChallenges: z.string()
+    .min(10, 'Please describe your current challenges (at least 10 characters)')
+    .max(1000, 'Description must be less than 1000 characters'),
+  interestedServices: z.string()
+    .min(1, 'Please select the services you\'re interested in'),
+  projectTimeline: z.string()
+    .min(1, 'Please select your project timeline'),
+  budget: z.string()
+    .min(1, 'Please select your budget range'),
+  additionalInfo: z.string()
+    .max(1000, 'Additional info must be less than 1000 characters')
+    .optional()
 })
 
 export const subscribeFormSchema = z.object({
@@ -31,7 +40,28 @@ export const subscribeFormSchema = z.object({
 export type ContactFormData = z.infer<typeof contactFormSchema>
 export type SubscribeFormData = z.infer<typeof subscribeFormSchema>
 
-export const primaryInterestOptions = [
+export const industryOptions = [
+  { value: 'technology', label: 'Technology' },
+  { value: 'healthcare', label: 'Healthcare' },
+  { value: 'finance', label: 'Finance & Banking' },
+  { value: 'retail', label: 'Retail & E-commerce' },
+  { value: 'real-estate', label: 'Real Estate' },
+  { value: 'education', label: 'Education' },
+  { value: 'hospitality', label: 'Hospitality & Tourism' },
+  { value: 'manufacturing', label: 'Manufacturing' },
+  { value: 'consulting', label: 'Professional Services' },
+  { value: 'other', label: 'Other' }
+]
+
+export const companySizeOptions = [
+  { value: 'startup', label: 'Startup (1-10 employees)' },
+  { value: 'small', label: 'Small Business (11-50 employees)' },
+  { value: 'medium', label: 'Medium Business (51-200 employees)' },
+  { value: 'large', label: 'Large Business (201-1000 employees)' },
+  { value: 'enterprise', label: 'Enterprise (1000+ employees)' }
+]
+
+export const interestedServicesOptions = [
   { value: 'social-media-management', label: 'Social Media Management' },
   { value: 'paid-social-advertising', label: 'Paid Social Advertising' },
   { value: 'content-creation', label: 'Content Creation' },
@@ -40,12 +70,21 @@ export const primaryInterestOptions = [
   { value: 'not-sure', label: 'Not Sure Yet' }
 ]
 
-export const monthlyBudgetOptions = [
-  { value: 'under-2500', label: 'Under $2,500' },
-  { value: '2500-5000', label: '$2,500 - $5,000' },
-  { value: '5000-10000', label: '$5,000 - $10,000' },
-  { value: '10000-25000', label: '$10,000 - $25,000' },
-  { value: '25000-50000', label: '$25,000 - $50,000' },
-  { value: '50000-plus', label: '$50,000+' },
+export const projectTimelineOptions = [
+  { value: 'asap', label: 'As soon as possible' },
+  { value: '1-month', label: 'Within 1 month' },
+  { value: '2-3-months', label: '2-3 months' },
+  { value: '3-6-months', label: '3-6 months' },
+  { value: '6-months-plus', label: '6+ months' },
+  { value: 'flexible', label: 'Flexible timeline' }
+]
+
+export const budgetOptions = [
+  { value: 'under-2500', label: 'Under $2,500/month' },
+  { value: '2500-5000', label: '$2,500 - $5,000/month' },
+  { value: '5000-10000', label: '$5,000 - $10,000/month' },
+  { value: '10000-25000', label: '$10,000 - $25,000/month' },
+  { value: '25000-50000', label: '$25,000 - $50,000/month' },
+  { value: '50000-plus', label: '$50,000+/month' },
   { value: 'prefer-to-discuss', label: 'Prefer to Discuss' }
 ]

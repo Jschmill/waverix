@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { contactFormSchema } from '@/lib/validations'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,47 +9,32 @@ export async function POST(request: NextRequest) {
     // Validate the form data
     const validatedData = contactFormSchema.parse(body)
     
-    // Here you would typically:
-    // 1. Send email notification
-    // 2. Save to database
-    // 3. Send to CRM
-    // 4. Trigger automation workflows
-    
-    console.log('Contact form submission:', validatedData)
-    
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // In a real implementation, you would:
-    /*
-    // Send email using a service like Resend, SendGrid, or Nodemailer
-    await sendEmail({
-      to: 'hello@waverix.com',
-      subject: `New Contact Form Submission from ${validatedData.firstName} ${validatedData.lastName}`,
-      template: 'contact-form',
-      data: validatedData
-    })
-    
-    // Send auto-reply to customer
-    await sendEmail({
-      to: validatedData.businessEmail,
-      subject: 'Thank you for contacting Waverix',
-      template: 'contact-confirmation',
-      data: validatedData
-    })
-    
     // Save to database
-    await db.contacts.create({
+    const contact = await prisma.contact.create({
       data: {
-        ...validatedData,
-        createdAt: new Date(),
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        businessEmail: validatedData.businessEmail,
+        companyName: validatedData.companyName,
+        industry: validatedData.industry,
+        companySize: validatedData.companySize,
+        currentChallenges: validatedData.currentChallenges,
+        interestedServices: validatedData.interestedServices,
+        projectTimeline: validatedData.projectTimeline,
+        budget: validatedData.budget,
+        additionalInfo: validatedData.additionalInfo,
+        source: body.source || 'contact_form',
         status: 'new'
       }
     })
     
-    // Send to CRM (e.g., HubSpot, Salesforce)
-    await crmService.createContact(validatedData)
-    */
+    console.log('Contact form submission saved:', contact.id)
+    
+    // TODO: In a real implementation, you would:
+    // - Send notification email to your team
+    // - Send auto-reply to customer
+    // - Integrate with your CRM system
+    // - Set up automated email sequences
     
     return NextResponse.json({
       success: true,

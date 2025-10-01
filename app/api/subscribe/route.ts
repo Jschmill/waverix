@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { subscribeFormSchema } from '@/lib/validations'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,41 +9,33 @@ export async function POST(request: NextRequest) {
     // Validate the email
     const validatedData = subscribeFormSchema.parse(body)
     
-    // Here you would typically:
-    // 1. Add to email marketing service (Mailchimp, ConvertKit, etc.)
-    // 2. Save to database
-    // 3. Send welcome email
-    
-    console.log('Newsletter subscription:', validatedData)
-    
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // In a real implementation, you would:
-    /*
-    // Add to email marketing service
-    await emailService.subscribe({
-      email: validatedData.email,
-      tags: ['website-signup'],
-      source: 'website-newsletter'
+    // Check if email already exists
+    const existingSubscriber = await prisma.subscriber.findUnique({
+      where: { email: validatedData.email }
     })
     
-    // Send welcome email
-    await sendEmail({
-      to: validatedData.email,
-      subject: 'Welcome to Waverix Newsletter!',
-      template: 'newsletter-welcome'
-    })
+    if (existingSubscriber) {
+      return NextResponse.json({
+        success: false,
+        message: 'This email is already subscribed to our newsletter.',
+      }, { status: 400 })
+    }
     
     // Save to database
-    await db.subscribers.create({
+    const subscriber = await prisma.subscriber.create({
       data: {
         email: validatedData.email,
         source: 'website',
-        createdAt: new Date()
+        isActive: true
       }
     })
-    */
+    
+    console.log('Newsletter subscription saved:', subscriber.id)
+    
+    // TODO: In a real implementation, you would:
+    // - Add to email marketing service (Mailchimp, ConvertKit, etc.)
+    // - Send welcome email
+    // - Set up automated email sequences
     
     return NextResponse.json({
       success: true,

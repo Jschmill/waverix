@@ -9,7 +9,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select, Textarea } from '@/components/ui/Input'
-import { contactFormSchema, type ContactFormData, primaryInterestOptions, monthlyBudgetOptions } from '@/lib/validations'
+import { contactFormSchema, type ContactFormData, industryOptions, companySizeOptions, interestedServicesOptions, projectTimelineOptions, budgetOptions } from '@/lib/validations'
 
 interface GetStartedModalProps {
   isOpen: boolean
@@ -62,13 +62,13 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
         fieldsToValidate = ['firstName', 'lastName']
         break
       case 2:
-        fieldsToValidate = ['businessEmail', 'companyWebsite']
+        fieldsToValidate = ['businessEmail', 'companyName', 'industry', 'companySize']
         break
       case 3:
-        fieldsToValidate = ['primaryInterest']
+        fieldsToValidate = ['interestedServices', 'projectTimeline']
         break
       case 4:
-        fieldsToValidate = ['monthlyBudget', 'reason']
+        fieldsToValidate = ['budget', 'currentChallenges']
         break
     }
 
@@ -88,15 +88,28 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
     setIsSubmitting(true)
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          source: 'get_started' // This will help differentiate in the database
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Something went wrong')
+      }
       
-      // Here you would normally send data to your API endpoint
-      console.log('Form submitted:', data)
-      
+      console.log('Form submitted successfully:', result)
       setIsSubmitted(true)
     } catch (error) {
       console.error('Submission error:', error)
+      // You could add error state handling here
     } finally {
       setIsSubmitting(false)
     }
@@ -209,23 +222,45 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
                   {...register('businessEmail')}
                 />
                 <Input
-                  type="url"
-                  label="Company Website"
-                  placeholder="https://company.com"
-                  error={errors.companyWebsite?.message}
-                  {...register('companyWebsite')}
+                  label="Company Name"
+                  placeholder="Acme Corporation"
+                  error={errors.companyName?.message}
+                  {...register('companyName')}
                 />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Select
+                    label="Industry"
+                    placeholder="Select your industry"
+                    options={industryOptions}
+                    error={errors.industry?.message}
+                    {...register('industry')}
+                  />
+                  <Select
+                    label="Company Size"
+                    placeholder="Select company size"
+                    options={companySizeOptions}
+                    error={errors.companySize?.message}
+                    {...register('companySize')}
+                  />
+                </div>
               </div>
             )}
 
             {currentStep === 3 && (
               <div className="space-y-6">
                 <Select
-                  label="Primary Interest"
-                  placeholder="Select your main interest"
-                  options={primaryInterestOptions}
-                  error={errors.primaryInterest?.message}
-                  {...register('primaryInterest')}
+                  label="Interested Services"
+                  placeholder="Select services you're interested in"
+                  options={interestedServicesOptions}
+                  error={errors.interestedServices?.message}
+                  {...register('interestedServices')}
+                />
+                <Select
+                  label="Project Timeline"
+                  placeholder="When would you like to start?"
+                  options={projectTimelineOptions}
+                  error={errors.projectTimeline?.message}
+                  {...register('projectTimeline')}
                 />
                 <div className="bg-slate-800/30 rounded-lg p-4 border border-purple-500/20">
                   <h5 className="font-medium text-white mb-2">Our Services Include:</h5>
@@ -242,17 +277,23 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
             {currentStep === 4 && (
               <div className="space-y-6">
                 <Select
-                  label="Monthly Budget Range"
+                  label="Budget Range"
                   placeholder="Select your budget range"
-                  options={monthlyBudgetOptions}
-                  error={errors.monthlyBudget?.message}
-                  {...register('monthlyBudget')}
+                  options={budgetOptions}
+                  error={errors.budget?.message}
+                  {...register('budget')}
                 />
                 <Textarea
-                  label="Tell us about your goals"
-                  placeholder="Describe your business goals, target audience, and what you hope to achieve with social media marketing..."
-                  error={errors.reason?.message}
-                  {...register('reason')}
+                  label="Current Challenges"
+                  placeholder="Describe your current marketing challenges, goals, and what you hope to achieve..."
+                  error={errors.currentChallenges?.message}
+                  {...register('currentChallenges')}
+                />
+                <Textarea
+                  label="Additional Information (Optional)"
+                  placeholder="Any additional details you'd like to share..."
+                  error={errors.additionalInfo?.message}
+                  {...register('additionalInfo')}
                 />
               </div>
             )}
