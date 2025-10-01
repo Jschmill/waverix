@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronDown, ChevronUp, User, Building, Target, DollarSign, MessageSquare, LogOut } from 'lucide-react'
+import { ChevronDown, ChevronUp, User, Building, Target, MessageSquare, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface Contact {
