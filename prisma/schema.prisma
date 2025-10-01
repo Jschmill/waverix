@@ -15,6 +15,7 @@ model Contact {
   firstName           String
   lastName            String
   businessEmail       String
+  phoneNumber         String?
   companyName         String
   industry            String
   companySize         String

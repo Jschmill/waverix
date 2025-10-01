@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -33,16 +33,16 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
     handleSubmit,
     formState: { errors },
     trigger,
-
-    reset
+    reset,
+    clearErrors
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    mode: 'onTouched',
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       firstName: '',
       lastName: '',
       businessEmail: '',
+      phoneNumber: '',
       companyName: '',
       industry: '',
       companySize: '',
@@ -53,7 +53,10 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
     }
   })
 
-
+  // Clear any initial errors on component mount
+  useEffect(() => {
+    clearErrors()
+  }, [clearErrors])
 
   const handleClose = () => {
     onClose()
@@ -72,10 +75,10 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
     
     switch (currentStep) {
       case 1:
-        fieldsToValidate = ['firstName', 'lastName']
+        fieldsToValidate = ['firstName', 'lastName', 'businessEmail', 'phoneNumber']
         break
       case 2:
-        fieldsToValidate = ['businessEmail', 'companyName', 'industry', 'companySize']
+        fieldsToValidate = ['companyName', 'industry', 'companySize']
         break
       case 3:
         fieldsToValidate = ['interestedServices']
@@ -209,31 +212,42 @@ export const GetStartedModal: React.FC<GetStartedModalProps> = ({ isOpen, onClos
             className="space-y-6"
           >
             {currentStep === 1 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label="First Name"
-                  placeholder="John"
-                  error={errors.firstName?.message}
-                  {...register('firstName')}
-                />
-                <Input
-                  label="Last Name"
-                  placeholder="Doe"
-                  error={errors.lastName?.message}
-                  {...register('lastName')}
-                />
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Input
+                    label="First Name"
+                    placeholder="John"
+                    error={errors.firstName?.message}
+                    {...register('firstName')}
+                  />
+                  <Input
+                    label="Last Name"
+                    placeholder="Doe"
+                    error={errors.lastName?.message}
+                    {...register('lastName')}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Input
+                    type="email"
+                    label="Business Email"
+                    placeholder="john@company.com"
+                    error={errors.businessEmail?.message}
+                    {...register('businessEmail')}
+                  />
+                  <Input
+                    type="tel"
+                    label="Phone Number (Optional)"
+                    placeholder="(555) 123-4567"
+                    error={errors.phoneNumber?.message}
+                    {...register('phoneNumber')}
+                  />
+                </div>
               </div>
             )}
 
             {currentStep === 2 && (
               <div className="space-y-6">
-                <Input
-                  type="email"
-                  label="Business Email"
-                  placeholder="john@company.com"
-                  error={errors.businessEmail?.message}
-                  {...register('businessEmail')}
-                />
                 <Input
                   label="Company Name"
                   placeholder="Acme Corporation"

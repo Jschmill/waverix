@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
         businessEmail: validatedData.businessEmail,
+        phoneNumber: validatedData.phoneNumber || null,
         companyName: validatedData.companyName,
         industry: validatedData.industry,
         companySize: validatedData.companySize,

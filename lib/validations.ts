@@ -10,6 +10,14 @@ export const contactFormSchema = z.object({
   businessEmail: z.string()
     .email('Please enter a valid email address')
     .min(5, 'Email must be at least 5 characters'),
+  phoneNumber: z.string()
+    .refine(val => {
+      if (!val || val.trim() === '') return true // Allow empty
+      // Remove all non-digit characters for validation
+      const digits = val.replace(/\D/g, '')
+      return digits.length === 10
+    }, 'Phone number must be a valid 10-digit US number (e.g., 555-123-4567)')
+    .optional(),
   companyName: z.string()
     .min(2, 'Company name must be at least 2 characters')
     .max(100, 'Company name must be less than 100 characters'),
@@ -18,18 +26,14 @@ export const contactFormSchema = z.object({
   companySize: z.string()
     .min(1, 'Please select your company size'),
   currentChallenges: z.string()
-    .transform(val => val || '')
-    .refine(val => val.length > 0, 'Please describe your current challenges'),
+    .min(1, 'Please describe your current challenges'),
   interestedServices: z.string()
-    .transform(val => val || '')
-    .refine(val => val.length > 0, 'Please select the services you\'re interested in'),
+    .min(1, 'Please select the services you\'re interested in'),
   budget: z.string()
-    .transform(val => val || '')
-    .refine(val => val.length > 0, 'Please select your budget range'),
+    .min(1, 'Please select your budget range'),
   additionalInfo: z.string()
     .max(1000, 'Additional info must be less than 1000 characters')
     .optional()
-    .default('')
 })
 
 export const subscribeFormSchema = z.object({

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
@@ -17,15 +17,16 @@ export const ContactForm: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    clearErrors
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    mode: 'onTouched',
-    reValidateMode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       firstName: '',
       lastName: '',
       businessEmail: '',
+      phoneNumber: '',
       companyName: '',
       industry: '',
       companySize: '',
@@ -36,7 +37,12 @@ export const ContactForm: React.FC = () => {
     }
   })
 
-  const onSubmit = async (data: ContactFormData) => {
+  // Clear any initial errors on component mount
+  useEffect(() => {
+    clearErrors()
+  }, [clearErrors])
+
+    const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true)
     
     try {
@@ -45,10 +51,7 @@ export const ContactForm: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...data,
-          source: 'contact_form'
-        }),
+        body: JSON.stringify({...data, source: 'contact_form'}),
       })
 
       const result = await response.json()
@@ -117,7 +120,7 @@ export const ContactForm: React.FC = () => {
           />
         </div>
 
-        {/* Business Info */}
+        {/* Contact Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             type="email"
@@ -127,12 +130,21 @@ export const ContactForm: React.FC = () => {
             {...register('businessEmail')}
           />
           <Input
-            label="Company Name"
-            placeholder="Acme Corporation"
-            error={errors.companyName?.message}
-            {...register('companyName')}
+            type="tel"
+            label="Phone Number (Optional)"
+            placeholder="(555) 123-4567"
+            error={errors.phoneNumber?.message}
+            {...register('phoneNumber')}
           />
         </div>
+
+        {/* Company Info */}
+        <Input
+          label="Company Name"
+          placeholder="Acme Corporation"
+          error={errors.companyName?.message}
+          {...register('companyName')}
+        />
 
         {/* Company Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
